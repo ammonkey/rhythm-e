@@ -72,7 +72,8 @@ typedef enum
 	RB_SHELL_UI_LOCATION_SIDEBAR,
 	RB_SHELL_UI_LOCATION_RIGHT_SIDEBAR,
 	RB_SHELL_UI_LOCATION_MAIN_TOP,
-	RB_SHELL_UI_LOCATION_MAIN_BOTTOM
+	RB_SHELL_UI_LOCATION_MAIN_BOTTOM,
+	RB_SHELL_UI_LOCATION_MAIN_NOTEBOOK
 } RBShellUILocation;
 
 GType rb_shell_ui_location_get_type (void);
@@ -191,6 +192,7 @@ void 		rb_shell_remove_widget (RBShell *shell, GtkWidget *widget, RBShellUILocat
 GtkWindow *     rb_shell_get_window (RBShell *shell);
 GtkActionGroup *rb_shell_get_actiongroup (RBShell *shell);
 void            rb_window_set_toolbar_items (RBShell *shell);
+void		rb_shell_notebook_set_page (RBShell *shell, GtkWidget *widget);
 
 G_END_DECLS
 

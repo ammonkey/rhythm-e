@@ -4197,6 +4197,11 @@ rb_shell_add_widget (RBShell *shell, GtkWidget *widget, RBShellUILocation locati
 	GtkBox *box;
 
 	switch (location) {
+	case RB_SHELL_UI_LOCATION_MAIN_NOTEBOOK:
+		gtk_notebook_append_page (GTK_NOTEBOOK (shell->priv->notebook),
+					  widget,
+					  gtk_label_new ("aa"));
+		break;
 	case RB_SHELL_UI_LOCATION_RIGHT_SIDEBAR:
 		if (!shell->priv->right_sidebar_widget_count)
 			gtk_widget_show (GTK_WIDGET (shell->priv->right_sidebar_container));
@@ -4222,8 +4227,16 @@ void
 rb_shell_remove_widget (RBShell *shell, GtkWidget *widget, RBShellUILocation location)
 {
 	GtkBox *box;
+	gint page_num;
 
 	switch (location) {
+	case RB_SHELL_UI_LOCATION_MAIN_NOTEBOOK:
+		page_num = gtk_notebook_page_num (GTK_NOTEBOOK (shell->priv->notebook),
+						  widget);
+		g_return_if_fail (page_num != -1);
+		gtk_notebook_remove_page (GTK_NOTEBOOK (shell->priv->notebook),
+					  page_num);
+		break;
 	case RB_SHELL_UI_LOCATION_RIGHT_SIDEBAR:
 		shell->priv->right_sidebar_widget_count--;
 		if (!shell->priv->right_sidebar_widget_count)
@@ -4235,6 +4248,37 @@ rb_shell_remove_widget (RBShell *shell, GtkWidget *widget, RBShellUILocation loc
 		gtk_container_remove (GTK_CONTAINER (box), widget);
 		break;
 	}
+}
+
+/**
+ * rb_shell_notebook_set_page:
+ * @shell: the #RBShell
+ * @widget: #GtkWidget for the page to display
+ *
+ * Changes the visible page in the main window notebook widget.  Use this to
+ * display widgets added to the #RB_SHELL_UI_LOCATION_MAIN_NOTEBOOK location.
+ */
+void
+rb_shell_notebook_set_page (RBShell *shell, GtkWidget *widget)
+{
+	gint page = 0;
+
+	/* if no widget specified, use the selected source */
+	if (widget == NULL)
+		widget = GTK_WIDGET (rb_shell_player_get_playing_source (shell->priv->player_shell));
+
+	if (widget)
+		page = gtk_notebook_page_num (GTK_NOTEBOOK (shell->priv->notebook), widget);
+
+	if (RB_IS_SOURCE (widget)) {
+		rb_source_header_set_source (shell->priv->source_header, RB_SOURCE (widget));
+		rb_shell_clipboard_set_source (shell->priv->clipboard_shell, RB_SOURCE (widget));
+	} else {
+		rb_source_header_set_source (shell->priv->source_header, NULL);
+		rb_shell_clipboard_set_source (shell->priv->clipboard_shell, NULL);
+	}
+
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (shell->priv->notebook), page);
 }
 
 /* This should really be standard. */
