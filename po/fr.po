@@ -219,7 +219,7 @@ msgstr "_Dernière Lecture"
 
 #: ../data/ui/general-prefs.ui.h:22
 msgid "_Play count"
-msgstr "_Nombre de lecture"
+msgstr "_Nombre de lectures"
 
 #: ../data/ui/general-prefs.ui.h:23
 msgid "_Quality"
@@ -5459,7 +5459,7 @@ msgstr "Note"
 
 #: ../widgets/rb-entry-view.c:1644
 msgid "Play Count"
-msgstr "Nombre de lectures"
+msgstr "Lectures"
 
 #: ../widgets/rb-entry-view.c:1656
 msgid "Last Played"

@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include <string.h>
+#include <ctype.h>
 #define __USE_XOPEN
 #include <time.h>
 
@@ -807,9 +808,15 @@ download_podcast (GFileInfo *src_info, RBPodcastManagerInfo *data)
 	}
 
 	if (local_file_name == NULL) {
-		/* fall back to the basename from the original URI */
-		local_file_name = g_file_get_basename (data->source);
-		rb_debug ("didn't get a filename from the file info request; using basename %s", local_file_name);
+		char *c;
+
+		/* fall back to the escaped URI */
+		local_file_name = g_file_get_uri (data->source);
+		for (c = local_file_name; *c; c++) {
+			if (!isalnum (*c) && *c != '.')
+				*c = '-';
+		}
+		rb_debug ("didn't get a filename from the file info request; using escaped uri %s", local_file_name);
 	}
 
 	/* if the filename ends with the query string from the original URI,

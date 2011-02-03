@@ -182,10 +182,15 @@ RBSource * rb_shell_get_source_by_entry_type (RBShell *shell,
 
 gboolean        rb_shell_get_party_mode (RBShell *shell);
 
+gboolean        rb_shell_hide_and_not_quit (RBShell *shell);
+
 void 		rb_shell_append_display_page (RBShell *shell, RBDisplayPage *page, RBDisplayPage *parent);
 
 void 		rb_shell_add_widget (RBShell *shell, GtkWidget *widget, RBShellUILocation location, gboolean expand, gboolean fill);
 void 		rb_shell_remove_widget (RBShell *shell, GtkWidget *widget, RBShellUILocation location);
+GtkWindow *     rb_shell_get_window (RBShell *shell);
+GtkActionGroup *rb_shell_get_actiongroup (RBShell *shell);
+void            rb_window_set_toolbar_items (RBShell *shell);
 
 G_END_DECLS
 

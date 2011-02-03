@@ -43,6 +43,7 @@
       <placeholder name="DeleteActionPlaceholder" />
       <menuitem name="EditMovetoTrash" action="EditMovetoTrash"/>
       <separator/>
+      <menuitem name="ToolbarEditor" action="ToolbarEditor"/>
       <menuitem name="EditPluginsMenu" action="EditPlugins"/>
       <menuitem name="EditPreferencesMenu" action="EditPreferences"/>
     </menu>
@@ -53,6 +54,7 @@
       <placeholder name="ViewMenuModePlaceholder"/>
       <separator name="ViewSep1"/>
       <menuitem name="ViewSidePaneMenu" action="ViewSidePane"/>
+      <menuitem name="ViewMenubarMenu" action="ViewMenubar"/>
       <menuitem name="ViewQueueAsSidebarMenu" action="ViewQueueAsSidebar"/>
       <menuitem name="ViewBrowserMenu" action="ViewBrowser"/>
       <menuitem name="ViewStatusbarMenu" action="ViewStatusbar"/>
@@ -95,9 +97,10 @@
 
   </menubar>
 
+<!-- deprecated with the toolbar editor of rhytm-e -->
   <toolbar name="ToolBar">
-    <toolitem name="Play" action="ControlPlay"/>
     <toolitem name="Previous" action="ControlPrevious"/>
+    <toolitem name="Play" action="ControlPlay"/>
     <toolitem name="Next" action="ControlNext"/>
     <separator/>
     <toolitem name="Repeat" action="ControlRepeat"/>
@@ -266,6 +269,16 @@
     <menuitem name="PropertiesMissingFilesPopup" action="MusicProperties"/>
     <separator/>
     <placeholder name="PluginPlaceholder"/>
+  </popup>
+
+  <popup name="ToolbarMenu" accelerators="false">
+      <menuitem name="ViewToolbarMenu" action="ViewToolbar"/>
+      <menuitem name="ViewSidePaneMenu" action="ViewSidePane"/>
+      <menuitem name="ViewBrowserMenu" action="ViewBrowser"/>
+      <menuitem name="ViewMenubarMenu" action="ViewMenubar"/>
+      <menuitem name="ViewStatusbarMenu" action="ViewStatusbar"/>
+      <separator/>
+      <menuitem name="ToolbarEditor" action="ToolbarEditor"/>
   </popup>
 
 </ui>

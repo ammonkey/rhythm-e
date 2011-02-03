@@ -306,6 +306,9 @@ enum
 
 static GtkActionEntry rb_shell_player_actions [] =
 {
+	{ "ControlPlay", GTK_STOCK_MEDIA_PLAY, N_("_Play"), "<control>space",
+	  N_("Start playback"),
+	  G_CALLBACK (rb_shell_player_cmd_play) },
 	{ "ControlPrevious", GTK_STOCK_MEDIA_PREVIOUS, N_("Pre_vious"), "<alt>Left",
 	  N_("Start playing the previous song"),
 	  G_CALLBACK (rb_shell_player_cmd_previous) },
@@ -323,9 +326,6 @@ static guint rb_shell_player_n_actions = G_N_ELEMENTS (rb_shell_player_actions);
 
 static GtkToggleActionEntry rb_shell_player_toggle_entries [] =
 {
-	{ "ControlPlay", GTK_STOCK_MEDIA_PLAY, N_("_Play"), "<control>space",
-	  N_("Start playback"),
-	  G_CALLBACK (rb_shell_player_cmd_play) },
 	{ "ControlShuffle", GNOME_MEDIA_SHUFFLE, N_("Sh_uffle"), "<control>U",
 	  N_("Play songs in a random order"),
 	  G_CALLBACK (rb_shell_player_shuffle_changed_cb) },
@@ -666,7 +666,6 @@ static void
 rb_shell_player_constructed (GObject *object)
 {
 	RBShellPlayer *player;
-	GtkAction *action;
 
 	RB_CHAIN_GOBJECT_METHOD (rb_shell_player_parent_class, constructed, object);
 
@@ -689,9 +688,6 @@ rb_shell_player_constructed (GObject *object)
 					     rb_shell_player_n_toggle_entries,
 					     player);
 
-	action = gtk_action_group_get_action (player->priv->actiongroup,
-					      "ControlPlay");
-	g_object_set (action, "is-important", TRUE, NULL);
 
 	player->priv->syncing_state = TRUE;
 	rb_shell_player_set_playing_source (player, NULL);
@@ -1004,8 +1000,9 @@ rb_shell_player_init (RBShellPlayer *player)
 		exit (1);
 	}
 
-	gtk_box_set_spacing (GTK_BOX (player), 12);
-	gtk_container_set_border_width (GTK_CONTAINER (player), 3);
+	//gtk_box_set_spacing (GTK_BOX (player), 12);
+	gtk_box_set_spacing (GTK_BOX (player), 0);
+	//gtk_container_set_border_width (GTK_CONTAINER (player), 3);
 
 	g_signal_connect_object (player->priv->mmplayer,
 				 "eos",
@@ -3837,7 +3834,6 @@ _idle_unblock_signal_cb (gpointer data)
 
 	/* sync the active state of the action again */
 	g_object_get (player, "playing", &playing, NULL);
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), playing);
 
 	g_signal_handlers_unblock_by_func (action, rb_shell_player_cmd_play, player);
 
@@ -3860,11 +3856,17 @@ rb_shell_player_playing_changed_cb (RBShellPlayer *player,
 	if (playing) {
 		if (rb_source_can_pause (player->priv->source)) {
 			tooltip = g_strdup (_("Pause playback"));
+			gtk_action_set_stock_id (action, GTK_STOCK_MEDIA_PAUSE);
+		        gtk_action_set_label (action, N_("_Pause"));
 		} else {
 			tooltip = g_strdup (_("Stop playback"));
+			gtk_action_set_stock_id (action, GTK_STOCK_MEDIA_STOP);
+		        gtk_action_set_label (action, N_("_Stop"));
 		}
 	} else {
 		tooltip = g_strdup (_("Start playback"));
+		gtk_action_set_stock_id (action, GTK_STOCK_MEDIA_PLAY);
+	        gtk_action_set_label (action, N_("_Play"));
 	}
 	g_object_set (action, "tooltip", tooltip, NULL);
 	g_free (tooltip);
@@ -3876,7 +3878,6 @@ rb_shell_player_playing_changed_cb (RBShellPlayer *player,
 	if (player->priv->unblock_play_id == 0) {
 		g_signal_handlers_block_by_func (action, rb_shell_player_cmd_play, player);
 	}
-	gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), playing);
 
 	if (player->priv->unblock_play_id == 0) {
 		player->priv->unblock_play_id = g_idle_add (_idle_unblock_signal_cb, player);

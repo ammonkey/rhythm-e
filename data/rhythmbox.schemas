@@ -229,6 +229,17 @@
 	</locale>
       </schema>
       <schema>
+        <key>/schemas/apps/rhythmbox/ui/menubar_hidden</key>
+	<applyto>/apps/rhythmbox/ui/menubar_hidden</applyto>
+	<owner>rhythmbox</owner>
+	<type>bool</type>
+	<default>TRUE</default>
+	<locale name="C">
+	<short>Menubar visibility</short>
+	<long>If true, the menubar is hidden.</long>
+	</locale>
+      </schema>
+      <schema>
         <key>/schemas/apps/rhythmbox/ui/small_display</key>
 	<applyto>/apps/rhythmbox/ui/small_display</applyto>
 	<owner>rhythmbox</owner>
@@ -271,6 +282,18 @@
 	<short>Toolbar visibility</short>
 	<long>If true, the toolbar is hidden.</long>
 	</locale>
+      </schema>
+      <schema>
+        <key>/schemas/apps/rhythmbox/ui/toolbar_items</key>
+        <applyto>/apps/rhythmbox/ui/toolbar_items</applyto>
+        <owner>rhythmbox</owner>
+        <type>list</type>
+        <list_type>string</list_type>
+        <default>[ControlPrevious,ControlPlay,ControlNext,Separator,ViewBrowser,SongControlBar,SearchInput,VolumeButton]</default>
+        <locale name="C">
+	<short>List of buttons present in the toolbar</short>
+	<long>List of entries used by the toolbar editor.</long>
+        </locale>
       </schema>
       <schema>
         <key>/schemas/apps/rhythmbox/ui/toolbar_style</key>

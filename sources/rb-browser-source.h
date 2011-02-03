@@ -69,6 +69,7 @@ typedef char*		(*RBBrowserSourceStringFunc)	(RBBrowserSource *source);
 
 GType		rb_browser_source_get_type		(void);
 
+void            rb_browser_source_set_noreset           (RBBrowserSource *source, gboolean val);
 char *		rb_browser_source_get_paned_key		(RBBrowserSource *source);
 gboolean	rb_browser_source_has_drop_support	(RBBrowserSource *source);
 

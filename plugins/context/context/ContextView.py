@@ -234,7 +234,8 @@ class ContextView (gobject.GObject):
         self.vbox = gtk.VBox()
         self.frame = gtk.Frame()
         self.label = gtk.Label(_('Nothing Playing'))
-        self.frame.set_shadow_type(gtk.SHADOW_IN)
+        #self.frame.set_shadow_type(gtk.SHADOW_IN)
+        self.frame.set_shadow_type(gtk.SHADOW_NONE)
         self.frame.set_label_align(0.0,0.0)
         self.frame.set_label_widget(self.label)
         self.label.set_use_markup(True)
@@ -266,7 +267,8 @@ class ContextView (gobject.GObject):
         self.webview.connect("navigation-requested", self.navigation_request_cb)
         self.scroll = gtk.ScrolledWindow()
         self.scroll.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.scroll.set_shadow_type(gtk.SHADOW_IN)
+        #self.scroll.set_shadow_type(gtk.SHADOW_IN)
+        self.scroll.set_shadow_type(gtk.SHADOW_NONE)
         self.scroll.add (self.webview)
 
         # set up webkit settings to match gtk font settings

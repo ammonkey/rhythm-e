@@ -92,6 +92,8 @@ librhythmbox_core_la_SOURCES =				\
 	rb-shell-player.c				\
 	rb-shell-preferences.c				\
 	rb-shell-preferences.h				\
+        rb-toolbar-editor.c                             \
+        rb-toolbar-editor.h                             \
 	rb-source-header.c				\
 	rb-source-header.h				\
 	rb-statusbar.c					\

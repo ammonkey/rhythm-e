@@ -105,6 +105,7 @@ struct RBHeaderPrivate
 	guint slider_moved_timeout;
 	long latest_set_time;
 	GtkWidget *elapsed;
+	GtkWidget *remaining;
 
 	gint64 elapsed_time;		/* nanoseconds */
 	long duration;
@@ -120,7 +121,8 @@ enum
 	PROP_SLIDER_DRAGGING
 };
 
-#define TITLE_FORMAT  "<big><b>%s</b></big>"
+//#define TITLE_FORMAT  "<big><b>%s</b></big>"
+#define TITLE_FORMAT  "<b>%s</b>"
 #define ALBUM_FORMAT  "<i>%s</i>"
 #define ARTIST_FORMAT "<i>%s</i>"
 #define STREAM_FORMAT "(%s)"
@@ -201,25 +203,36 @@ rb_header_init (RBHeader *header)
 	 * The children in this widget look like this:
 	 * RBHeader
 	 *   GtkHBox
+	 *     GtkLabel	        	(priv->elapsed)
 	 *     GtkLabel			(priv->song)
-	 *   GtkHBox			(priv->timeline)
-	 *     GtkHScale		(priv->scale)
-	 *     GtkAlignment
-	 *       GtkLabel		(priv->elapsed)
+	 *     GtkLabel	        	(priv->remaining)
 	 */
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 
 	header->priv = G_TYPE_INSTANCE_GET_PRIVATE (header, RB_TYPE_HEADER, RBHeaderPrivate);
 
-	gtk_box_set_spacing (GTK_BOX (header), 3);
+	gtk_box_set_spacing (GTK_BOX (header), 0);
 
-	vbox = gtk_vbox_new (FALSE, 6);
+	vbox = gtk_vbox_new (FALSE, 0);
 	gtk_widget_show (vbox);
-	gtk_box_pack_start (GTK_BOX (header), vbox, TRUE, TRUE, 0);
+	//gtk_box_pack_start (GTK_BOX (header), vbox, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (header), vbox, TRUE, TRUE, 80);
+	//gtk_box_pack_start (GTK_BOX (header), vbox, TRUE, FALSE, 0);
+
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_widget_set_size_request (hbox, -1, 3);
+	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show (hbox);
+
+	hbox = gtk_hbox_new (FALSE, 0);
+
+	/* elapsed time */
+	header->priv->elapsed = gtk_label_new ("");
+	gtk_box_pack_start (GTK_BOX (hbox), header->priv->elapsed, FALSE, FALSE, 0);
+	gtk_widget_show (header->priv->elapsed);
 
 	/* song info */
-	hbox = gtk_hbox_new (FALSE, 16);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show (hbox);
 
@@ -227,25 +240,23 @@ rb_header_init (RBHeader *header)
  	gtk_label_set_use_markup (GTK_LABEL (header->priv->song), TRUE);
  	gtk_label_set_selectable (GTK_LABEL (header->priv->song), TRUE);
 	gtk_label_set_ellipsize (GTK_LABEL (header->priv->song), PANGO_ELLIPSIZE_END);
-	gtk_misc_set_alignment (GTK_MISC (header->priv->song), 0.0, 0.0);
+	//gtk_misc_set_alignment (GTK_MISC (header->priv->song), 0.5, 0.0);
+	gtk_misc_set_alignment (GTK_MISC (header->priv->song), 0.5, 0.5);
 	gtk_box_pack_start (GTK_BOX (hbox), header->priv->song, TRUE, TRUE, 0);
 	gtk_widget_show (header->priv->song);
 
-	/* construct the time display */
-	header->priv->timeline = gtk_hbox_new (FALSE, 3);
-	header->priv->elapsed = gtk_label_new ("");
-
-	gtk_misc_set_padding (GTK_MISC (header->priv->elapsed), 2, 0);
-	gtk_box_pack_start (GTK_BOX (header->priv->timeline), header->priv->elapsed, FALSE, FALSE, 0);
-	gtk_box_pack_end (GTK_BOX (hbox), header->priv->timeline, FALSE, FALSE, 0);
-	gtk_widget_show_all (header->priv->timeline);
+	/* remaining time */
+	header->priv->remaining = gtk_label_new ("");
+	gtk_box_pack_end (GTK_BOX (hbox), header->priv->remaining, FALSE, FALSE, 0);
+	gtk_widget_show (header->priv->remaining);
 
 	/* row for the position slider */
-	header->priv->scaleline = gtk_hbox_new (FALSE, 3);
+	header->priv->scaleline = gtk_hbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), header->priv->scaleline, FALSE, FALSE, 0);
 	header->priv->scaleline_shown = FALSE;
 
-	header->priv->adjustment = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 10.0, 1.0, 10.0, 0.0));
+	//header->priv->adjustment = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 10.0, 1.0, 10.0, 0.0));
+	header->priv->adjustment = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 10.0, 0.0, 10.0, 0.0));
 	header->priv->scale = gtk_hscale_new (header->priv->adjustment);
 	g_signal_connect_object (G_OBJECT (header->priv->scale),
 				 "button_press_event",
@@ -268,7 +279,9 @@ rb_header_init (RBHeader *header)
 				 G_CALLBACK (slider_scroll_callback),
 				 header, 0);
 	gtk_scale_set_draw_value (GTK_SCALE (header->priv->scale), FALSE);
-	gtk_widget_set_size_request (header->priv->scale, 150, -1);
+	//gtk_widget_set_size_request (header->priv->scale, 220, 14);
+	//gtk_widget_set_size_request (header->priv->scale, 350, 14);
+	gtk_widget_set_size_request (header->priv->scale, 320, -1);
 	gtk_box_pack_start (GTK_BOX (header->priv->scaleline), header->priv->scale, TRUE, TRUE, 0);
 
 	/* currently, nothing sets this.  it should be set on track changes. */
@@ -784,14 +797,16 @@ rb_header_update_elapsed (RBHeader *header)
 
 	if (header->priv->entry != NULL) {
 		char *elapsed_text;
+                char *remaining_text;
 
-		elapsed_text = rb_make_elapsed_time_string (seconds,
-							    header->priv->duration,
-							    !eel_gconf_get_boolean (CONF_UI_TIME_DISPLAY));
+		elapsed_text = rbe_make_elapsed_time_string (seconds, header->priv->duration);
+		remaining_text = rbe_make_remaining_time_string (seconds, header->priv->duration);
 		gtk_label_set_text (GTK_LABEL (header->priv->elapsed), elapsed_text);
+		gtk_label_set_text (GTK_LABEL (header->priv->remaining), remaining_text);
 		g_free (elapsed_text);
 	} else {
 		gtk_label_set_text (GTK_LABEL (header->priv->elapsed), "");
+		gtk_label_set_text (GTK_LABEL (header->priv->remaining), "");
 	}
 
 }

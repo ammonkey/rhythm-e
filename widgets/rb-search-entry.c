@@ -44,6 +44,9 @@ static void rb_search_entry_changed_cb (GtkEditable *editable,
 			                RBSearchEntry *entry);
 static void rb_search_entry_activate_cb (GtkEntry *gtkentry,
 					 RBSearchEntry *entry);
+static gboolean rb_search_entry_focus_in_event_cb (GtkWidget *widget,
+				                    GdkEventFocus *event,
+				                    RBSearchEntry *entry);
 static gboolean rb_search_entry_focus_out_event_cb (GtkWidget *widget,
 				                    GdkEventFocus *event,
 				                    RBSearchEntry *entry);
@@ -141,7 +144,7 @@ rb_search_entry_class_init (RBSearchEntryClass *klass)
 static void
 rb_search_entry_init (RBSearchEntry *entry)
 {
-	GtkWidget *label;
+	//GtkWidget *label;
 	GtkSettings *settings;
 	char *theme;
 
@@ -154,9 +157,9 @@ rb_search_entry_init (RBSearchEntry *entry)
 	g_free (theme);
 
 	/* this string can only be so long, or there wont be a search entry :) */
-	label = gtk_label_new_with_mnemonic (_("_Search:"));
+	/*label = gtk_label_new_with_mnemonic (_("_Search:"));
 	gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_RIGHT);
-	gtk_box_pack_start (GTK_BOX (entry), label, FALSE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (entry), label, FALSE, TRUE, 0);*/
 
 	entry->priv->entry = gtk_entry_new ();
 	gtk_entry_set_icon_from_stock (GTK_ENTRY (entry->priv->entry),
@@ -170,14 +173,18 @@ rb_search_entry_init (RBSearchEntry *entry)
 				 G_CALLBACK (rb_search_entry_clear_cb),
 				 entry, 0);
 
-	gtk_label_set_mnemonic_widget (GTK_LABEL (label),
-				       entry->priv->entry);
+	/*gtk_label_set_mnemonic_widget (GTK_LABEL (label),
+				       entry->priv->entry);*/
 
 	gtk_box_pack_start (GTK_BOX (entry), entry->priv->entry, TRUE, TRUE, 0);
 
 	g_signal_connect_object (G_OBJECT (entry->priv->entry),
 				 "changed",
 				 G_CALLBACK (rb_search_entry_changed_cb),
+				 entry, 0);
+	g_signal_connect_object (G_OBJECT (entry->priv->entry),
+				 "focus_in_event",
+				 G_CALLBACK (rb_search_entry_focus_in_event_cb),
 				 entry, 0);
 	g_signal_connect_object (G_OBJECT (entry->priv->entry),
 				 "focus_out_event",
@@ -259,7 +266,8 @@ void
 rb_search_entry_set_text (RBSearchEntry *entry, const char *text)
 {
 	gtk_entry_set_text (GTK_ENTRY (entry->priv->entry),
-			    text ? text : "");
+			    text ? text : "Search...");
+			    //text ? text : "");
 }
 
 static void
@@ -274,9 +282,11 @@ rb_search_entry_check_style (RBSearchEntry *entry)
 
 	text = gtk_entry_get_text (GTK_ENTRY (entry->priv->entry));
 	if (text && *text) {
-		gtk_widget_modify_text (entry->priv->entry, GTK_STATE_NORMAL, &fg_colour);
-		gtk_widget_modify_base (entry->priv->entry, GTK_STATE_NORMAL, &bg_colour);
-		gtk_widget_modify_cursor (entry->priv->entry, &fg_colour, &fg_colour);
+                if (strcmp (text, "Search...")) {
+		        gtk_widget_modify_text (entry->priv->entry, GTK_STATE_NORMAL, &fg_colour);
+        		gtk_widget_modify_base (entry->priv->entry, GTK_STATE_NORMAL, &bg_colour);
+	        	gtk_widget_modify_cursor (entry->priv->entry, &fg_colour, &fg_colour);
+                }
 	} else {
 		gtk_widget_modify_text (entry->priv->entry, GTK_STATE_NORMAL, NULL);
 		gtk_widget_modify_base (entry->priv->entry, GTK_STATE_NORMAL, NULL);
@@ -319,6 +329,16 @@ rb_search_entry_timeout_cb (RBSearchEntry *entry)
 	gdk_threads_leave ();
 
 	return FALSE;
+}
+
+static gboolean
+rb_search_entry_focus_in_event_cb (GtkWidget *widget,
+                                   GdkEventFocus *event,
+                                   RBSearchEntry *entry)
+{
+        if (!strcmp (gtk_entry_get_text(GTK_ENTRY (entry->priv->entry)), "Search..."))
+        	gtk_entry_set_text (GTK_ENTRY (entry->priv->entry), "");
+        return FALSE;
 }
 
 static gboolean

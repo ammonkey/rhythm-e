@@ -178,6 +178,8 @@ ui_manager_add_widget_cb (GtkUIManager *ui_manager,
 			  GtkWidget *widget,
 			  RBSourceHeader *header)
 {
+        //amtest
+#if 0
 	if (header->priv->search_bar != NULL) {
 		return;
 	}
@@ -196,6 +198,21 @@ ui_manager_add_widget_cb (GtkUIManager *ui_manager,
 					  5, 0);
 		}
 	}
+#endif
+	/*if (GTK_IS_TOOLBAR (widget)) {
+		if (header->priv->search_bar != NULL) {
+                        GtkWidget *toolbar = gtk_ui_manager_get_widget (header->priv->ui_manager, "/ToolBar");
+                        if (toolbar == NULL)
+                                printf ("FAILED AGAIN\n");
+                        GtkToolItem *item;
+                        item = gtk_tool_item_new ();
+                        GtkWidget *test = gtk_label_new("test");
+                        gtk_container_add (GTK_CONTAINER (item), test);
+                        gtk_widget_show (GTK_WIDGET (item));
+                        gtk_widget_show (test);
+                        gtk_toolbar_insert(GTK_TOOLBAR (toolbar), item, -1);
+                }
+        }*/
 }
 
 static void
@@ -291,35 +308,39 @@ rb_source_header_class_init (RBSourceHeaderClass *klass)
 static void
 rb_source_header_init (RBSourceHeader *header)
 {
-	GtkWidget *align;
-	GtkEventBox *ebox;
+	//GtkWidget *align;
+	//GtkEventBox *ebox;
 
 	header->priv = RB_SOURCE_HEADER_GET_PRIVATE (header);
 
 	gtk_table_set_col_spacings (GTK_TABLE (header), 5);
 	gtk_table_resize (GTK_TABLE (header), 1, 3);
 
-	ebox = GTK_EVENT_BOX (gtk_event_box_new ());
+	//ebox = GTK_EVENT_BOX (gtk_event_box_new ());
 	header->priv->search = GTK_WIDGET (rb_search_entry_new ());
 
-	gtk_widget_set_tooltip_text (GTK_WIDGET (ebox),
-				     _("Filter music display by genre, artist, album, or title"));
+	/*gtk_widget_set_tooltip_text (GTK_WIDGET (ebox),
+				     _("Filter music display by genre, artist, album, or title"));*/
 
-	gtk_container_add (GTK_CONTAINER (ebox), GTK_WIDGET (header->priv->search));
+        //amtest
+	//gtk_container_add (GTK_CONTAINER (ebox), GTK_WIDGET (header->priv->search));
 
 	g_signal_connect_object (G_OBJECT (header->priv->search), "search",
 				 G_CALLBACK (rb_source_header_search_cb), header, 0);
 	g_signal_connect_object (G_OBJECT (header->priv->search), "activate",
 				 G_CALLBACK (rb_source_header_search_activate_cb), header, 0);
 
-	align = gtk_alignment_new (1.0, 0.5, 1.0, 1.0);
-	gtk_container_add (GTK_CONTAINER (align), GTK_WIDGET (ebox));
+	//align = gtk_alignment_new (1.0, 0.5, 1.0, 1.0);
+	//gtk_container_add (GTK_CONTAINER (align), GTK_WIDGET (ebox));
+	//gtk_container_add (GTK_CONTAINER (align), GTK_WIDGET (header->priv->search));
 	gtk_table_attach (GTK_TABLE (header),
-			  align,
+			  //align,
+	                  header->priv->search,
 			  0, 1, 0, 1,
 			  GTK_EXPAND | GTK_FILL,
 			  GTK_EXPAND | GTK_FILL,
-			  5, 0);
+			  //5, 0);
+			  0, 0);
 
 	header->priv->source_states = g_hash_table_new_full (g_direct_hash, g_direct_equal,
 							    NULL, (GDestroyNotify)sourcestate_free);
@@ -586,7 +607,6 @@ rb_source_header_set_property (GObject *object,
 		header->priv->ui_manager = g_value_get_object (value);
 		g_signal_connect (G_OBJECT (header->priv->ui_manager), "add_widget",
 				  G_CALLBACK (ui_manager_add_widget_cb), header);
-
 		header->priv->source_ui_merge_id = gtk_ui_manager_new_merge_id (header->priv->ui_manager);
 		break;
 	default:

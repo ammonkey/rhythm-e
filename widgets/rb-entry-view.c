@@ -877,7 +877,8 @@ rb_entry_view_new (RhythmDB *db,
 					   "vadjustment", NULL,
 					   "hscrollbar_policy", GTK_POLICY_AUTOMATIC,
 					   "vscrollbar_policy", GTK_POLICY_AUTOMATIC,
-					   "shadow_type", GTK_SHADOW_IN,
+					   //"shadow_type", GTK_SHADOW_IN,
+					   "shadow_type", GTK_SHADOW_NONE,
 					   "db", db,
 					   "shell-player", RB_SHELL_PLAYER (shell_player),
 					   "sort-key", sort_key,
@@ -1012,7 +1013,8 @@ rb_entry_view_long_cell_data_func (GtkTreeViewColumn *column,
 	else
 		str = g_strdup ("");
 
-	g_object_set (renderer, "text", str, NULL);
+	g_object_set (renderer, 
+                      "text", str, NULL);
 	g_free (str);
 	rhythmdb_entry_unref (entry);
 }

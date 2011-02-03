@@ -763,6 +763,57 @@ rb_make_elapsed_time_string (guint elapsed, guint duration, gboolean show_remain
 	}
 }
 
+char *
+rbe_make_elapsed_time_string (guint elapsed, guint duration)
+{
+	int seconds = 0, minutes = 0, hours = 0;
+
+	if (duration == 0)
+		return rb_make_duration_string (elapsed);
+
+	if (elapsed > 0) {
+		hours = elapsed / (60 * 60);
+		minutes = (elapsed - (hours * 60 * 60)) / 60;
+		seconds = elapsed % 60;
+	}
+
+	if (hours == 0)
+		return g_strdup_printf (_("%d:%02d"),
+					minutes, seconds);
+	else
+		return g_strdup_printf (_("%d:%02d:%02d"),
+					hours, minutes, seconds);
+}
+
+char *
+rbe_make_remaining_time_string (guint elapsed, guint duration)
+{
+	int seconds = 0, minutes = 0, hours = 0;
+
+	if (duration == 0)
+		return rb_make_duration_string (elapsed);
+
+	if (elapsed > 0) {
+		hours = elapsed / (60 * 60);
+		minutes = (elapsed - (hours * 60 * 60)) / 60;
+		seconds = elapsed % 60;
+	}
+
+	int remaining = duration - elapsed;
+	int remaining_hours = remaining / (60 * 60);
+	int remaining_minutes = (remaining - (remaining_hours * 60 * 60)) / 60;
+	/* remaining could conceivably be negative. This would
+	 * be a bug, but the elapsed time will display right
+	 * with the abs(). */
+	int remaining_seconds = abs (remaining % 60);
+	if (hours == 0)
+		return g_strdup_printf (_("%d:%02d"),
+					remaining_minutes, remaining_seconds);
+	else
+		return g_strdup_printf (_("%d:%02d:%02d"),
+					remaining_hours, remaining_minutes, remaining_seconds);
+}
+
 /**
  * rb_string_list_equal: (skip):
  * @a: (element-type utf8): list of strings to compare

@@ -71,7 +71,8 @@
 #define CONF_OLD_NOTIFICATIONS	"/apps/rhythmbox/ui/show_notifications"
 #define CONF_OLD_VISIBILITY	"/apps/rhythmbox/state/window_visible"
 
-static void toggle_window_cmd (GtkAction *action, RBStatusIconPlugin *plugin);
+static void hide_or_quit_cmd (GtkAction *action, RBStatusIconPlugin *plugin);
+//static void toggle_window_cmd (GtkAction *action, RBStatusIconPlugin *plugin);
 static void show_window_cmd (GtkAction *action, RBStatusIconPlugin *plugin);
 static void show_notifications_cmd (GtkAction *action, RBStatusIconPlugin *plugin);
 static void update_status_icon_visibility (RBStatusIconPlugin *plugin, gboolean notifying);
@@ -144,7 +145,7 @@ static GtkActionEntry rb_status_icon_plugin_actions [] =
 {
 	{ "MusicClose", GTK_STOCK_CLOSE, N_("_Close"), "<control>W",
 	  N_("Hide the music player window"),
-	  G_CALLBACK (toggle_window_cmd) }
+	  G_CALLBACK (hide_or_quit_cmd) }
 };
 
 static GtkToggleActionEntry rb_status_icon_plugin_toggle_entries [] =
@@ -189,12 +190,18 @@ create_tooltip_pixbuf (GdkPixbuf *pixbuf)
 }
 
 /* UI actions */
-
 static void
+hide_or_quit_cmd (GtkAction *action, RBStatusIconPlugin *plugin)
+{
+	if (!rb_shell_hide_and_not_quit (plugin->priv->shell))
+		rb_shell_quit (plugin->priv->shell, NULL);
+}
+
+/*static void
 toggle_window_cmd (GtkAction *action, RBStatusIconPlugin *plugin)
 {
 	rb_shell_toggle_visibility (plugin->priv->shell);
-}
+}*/
 
 static void
 show_window_cmd (GtkAction *action, RBStatusIconPlugin *plugin)

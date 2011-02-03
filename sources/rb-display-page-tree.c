@@ -195,7 +195,7 @@ indent_level1_cell_data_func (GtkTreeViewColumn *tree_column,
 	depth = gtk_tree_path_get_depth (path);
 	gtk_tree_path_free (path);
 	g_object_set (cell,
-		      "text", "    ",
+		      "text", "   ",
 		      "visible", depth > 1,
 		      NULL);
 }
@@ -214,7 +214,7 @@ indent_level2_cell_data_func (GtkTreeViewColumn *tree_column,
 	depth = gtk_tree_path_get_depth (path);
 	gtk_tree_path_free (path);
 	g_object_set (cell,
-		      "text", "    ",
+		      "text", "   ",
 		      "visible", depth > 2,
 		      NULL);
 }
@@ -269,10 +269,13 @@ title_cell_data_func (GtkTreeViewColumn *column,
 
 	g_object_get (page, "name", &name, NULL);
 
-	g_object_set (renderer,
-		      "text", name,
-		      "weight", playing ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL,
-		      NULL);
+	if (RB_IS_DISPLAY_PAGE_GROUP (page)) {
+	    g_object_set (renderer, "text", name,
+			  "weight", 900, "weight-set", TRUE, NULL);
+	} else {
+	    g_object_set (renderer, "text", name,
+			  "weight", playing ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL, NULL);
+	}
 
 	set_cell_background (display_page_tree, renderer, RB_IS_DISPLAY_PAGE_GROUP (page), FALSE);
 

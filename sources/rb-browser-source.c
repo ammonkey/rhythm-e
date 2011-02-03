@@ -133,6 +133,7 @@ struct RBBrowserSourcePrivate
 	gboolean populate;
 	gboolean query_active;
 	gboolean search_on_completion;
+	gboolean browser_noreset;
 	RBSourceSearch *default_search;
 
 	GtkActionGroup *action_group;
@@ -790,14 +791,22 @@ impl_get_search_actions (RBSource *source)
 static void
 impl_browser_toggled (RBSource *asource, gboolean disclosed)
 {
+        printf("RB browser source: %s\n", G_STRFUNC);
 	RBBrowserSource *source = RB_BROWSER_SOURCE (asource);
 
 	if (disclosed) {
 		gtk_widget_show (GTK_WIDGET (source->priv->browser));
 	} else {
 		gtk_widget_hide (GTK_WIDGET (source->priv->browser));
-		rb_library_browser_reset (source->priv->browser);
+                if (!source->priv->browser_noreset)
+		        rb_library_browser_reset (source->priv->browser);
 	}
+}
+
+void
+rb_browser_source_set_noreset(RBBrowserSource *source, gboolean val)
+{
+        source->priv->browser_noreset = val;
 }
 
 /**
