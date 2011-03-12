@@ -1038,7 +1038,7 @@ rhythmdb_property_model_get_value (GtkTreeModel *tree_model,
 		switch (column) {
 		case RHYTHMDB_PROPERTY_MODEL_COLUMN_TITLE:
 			g_value_init (value, G_TYPE_STRING);
-			g_value_set_string (value, rb_refstring_get (prop->string));
+			g_value_set_string (value, g_markup_escape_text (rb_refstring_get (prop->string), -1));
 			break;
 		case RHYTHMDB_PROPERTY_MODEL_COLUMN_PRIORITY:
 			g_value_init (value, G_TYPE_BOOLEAN);
