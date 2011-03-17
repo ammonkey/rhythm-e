@@ -39,6 +39,7 @@
 #include "rhythmdb.h"
 #include "rhythmdb-tree.h"
 #include "rb-podcast-entry-types.h"
+#include "locale.h"
 
 /* test utils */
 gboolean waiting, signaled;
@@ -100,7 +101,8 @@ main (int argc, char **argv)
 
 	g_thread_init (NULL);
 	rb_threads_init ();
-	gtk_set_locale ();
+	//gtk_set_locale ();
+	setlocale(LC_ALL, "");
 	gtk_init (&argc, &argv);
 	rb_debug_init (FALSE);
 	rb_refstring_system_init ();

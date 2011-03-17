@@ -146,7 +146,8 @@ main (int argc, char **argv)
 	g_option_context_add_group (context, egg_sm_client_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
-	gtk_set_locale ();
+	//gtk_set_locale ();
+	setlocale(LC_ALL, "");
 
 	rb_profile_start ("parsing command line options");
 	if (g_option_context_parse (context, &argc, &argv, &error) == FALSE) {
