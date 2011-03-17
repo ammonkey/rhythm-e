@@ -155,7 +155,7 @@ static void rb_entry_view_rows_reordered_cb (GtkTreeModel *model,
 					     GtkTreeIter *iter,
 					     gint *order,
 					     RBEntryView *view);
-static void rb_entry_view_sync_columns_visible (RBEntryView *view);
+//static void rb_entry_view_sync_columns_visible (RBEntryView *view);
 static void rb_entry_view_columns_config_changed_cb (GConfClient* client,
 						    guint cnxn_id,
 						    GConfEntry *entry,
@@ -2549,7 +2549,7 @@ set_column_visibility (guint propid,
 	gtk_tree_view_column_set_visible (column, visible);
 }
 
-static void
+void
 rb_entry_view_sync_columns_visible (RBEntryView *view)
 {
 	char **items;
@@ -2575,6 +2575,36 @@ rb_entry_view_sync_columns_visible (RBEntryView *view)
 
 	g_list_free (visible_properties);
 	g_free (config);
+}
+
+void
+rb_entry_view_set_minimum_columns_visible (RBEntryView *view)
+{
+	GList *list;
+	GtkTreeViewColumn *col;
+	gint i;
+
+	GtkTreeViewColumn *col_title = rb_entry_view_get_column (view, RB_ENTRY_VIEW_COL_TITLE);
+	GtkTreeViewColumn *col_tracknb = rb_entry_view_get_column (view, RB_ENTRY_VIEW_COL_TRACK_NUMBER);
+	list = gtk_tree_view_get_columns (GTK_TREE_VIEW (view->priv->treeview));
+	for (i=0; list; list=list->next, i++)
+	{
+		col = list->data;
+		if (i != 0)
+			if (!(col == col_title || col == col_tracknb)) 
+				gtk_tree_view_column_set_visible (col, FALSE);
+	}
+	g_list_free(list);
+}
+
+void
+rb_entry_view_activate_first_row (RBEntryView *view)
+{
+	GtkTreePath *path;
+
+	path = gtk_tree_path_new_from_indices (0, -1);
+	gtk_tree_view_row_activated (GTK_TREE_VIEW (view->priv->treeview), path, NULL);
+	gtk_tree_path_free (path);
 }
 
 /**

@@ -160,6 +160,10 @@ gboolean	rb_entry_view_get_entry_contained	(RBEntryView *view,
 gboolean	rb_entry_view_get_entry_visible		(RBEntryView *view,
 							 RhythmDBEntry *entry);
 
+void		rb_entry_view_sync_columns_visible	(RBEntryView *view);
+void		rb_entry_view_set_minimum_columns_visible (RBEntryView *view);
+void		rb_entry_view_activate_first_row	(RBEntryView *view);
+
 void		rb_entry_view_scroll_to_entry		(RBEntryView *view,
 							 RhythmDBEntry *entry);
 

@@ -1328,8 +1328,8 @@ construct_widgets (RBShell *shell)
 	shell->priv->notebook = gtk_notebook_new ();
 	gtk_widget_show (shell->priv->notebook);
 	//amtest
-	//gtk_notebook_set_show_tabs (GTK_NOTEBOOK (shell->priv->notebook), FALSE);
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (shell->priv->notebook), TRUE);
+	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (shell->priv->notebook), FALSE);
+	//gtk_notebook_set_show_tabs (GTK_NOTEBOOK (shell->priv->notebook), TRUE);
 	gtk_notebook_set_show_border (GTK_NOTEBOOK (shell->priv->notebook), FALSE);
 	g_signal_connect_object (shell->priv->display_page_tree,
 				 "size-allocate",
@@ -4273,14 +4273,14 @@ rb_shell_notebook_set_page (RBShell *shell, GtkWidget *widget)
 	/* has source changed? (we can have differents representations/view of a same source) */
 	RBSource *source;
 	g_object_get (shell->priv->source_header, "source", &source, NULL);
-	if (source != RB_SOURCE (widget)) {
-		if (RB_IS_SOURCE (widget)) {
+	if (RB_IS_SOURCE (widget)) {
+		if (source != RB_SOURCE (widget)) {
 			rb_source_header_set_source (shell->priv->source_header, RB_SOURCE (widget));
 			rb_shell_clipboard_set_source (shell->priv->clipboard_shell, RB_SOURCE (widget));
-		} else {
-			rb_source_header_set_source (shell->priv->source_header, NULL);
-			rb_shell_clipboard_set_source (shell->priv->clipboard_shell, NULL);
 		}
+	} else {
+		rb_source_header_set_source (shell->priv->source_header, NULL);
+		rb_shell_clipboard_set_source (shell->priv->clipboard_shell, NULL);
 	}
 
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (shell->priv->notebook), page);

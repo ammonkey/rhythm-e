@@ -791,7 +791,6 @@ impl_get_search_actions (RBSource *source)
 static void
 impl_browser_toggled (RBSource *asource, gboolean disclosed)
 {
-        printf("RB browser source: %s\n", G_STRFUNC);
 	RBBrowserSource *source = RB_BROWSER_SOURCE (asource);
 
 	if (disclosed) {
